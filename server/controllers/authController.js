@@ -1,8 +1,7 @@
 import userModel from "../models/userModel.js"
-//const dotenv = require('dotenv');
-import jwt from'jsonwebtoken';
+
 import bcrypt from "bcryptjs";
-import { generateAccessToken, generateRefreshToken, refreshAccessTokenService } from "../services/authService.js";
+import { generateAccessToken, generateRefreshToken } from "../services/authService.js";
 
 
 
@@ -12,9 +11,13 @@ export const register = async (req,res)=>{
   try {
     const {name,email,password,currentPassword} = req.body;
 
-    if(!name || !email || !password || !currentPassword){
+    if(!name || !email || !password || !currentPassword){ 
       return res.status(400).json({message : "All fields are required"})
     }
+
+    if (password !== currentPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+  }
 
     const existingUser = await userModel.findOne({email})
      if(existingUser){
@@ -82,6 +85,9 @@ export const login = async (req,res)=>{
     user.refreshToken = refreshToken;
     await user.save();  
 
+    console.log(accessToken)
+    console.log(refreshToken)
+
     res.status(200).json({
       message : "Login successfull!",
       user : {
@@ -94,6 +100,7 @@ export const login = async (req,res)=>{
       refreshToken,
     })
     }
+    
     catch(error){
       res.status(500).json({message : "Server error", error : error.message})
     }
@@ -101,37 +108,51 @@ export const login = async (req,res)=>{
 
   // Refresh token controller
 
-  export const refreshTokencontroller = async (req,res)=>{
+  export const refreshTokencontroller = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
 
-    const {refreshToken} = req.body;
-
-    if(!refreshToken){
-      return res.status(401).json({message : "Refresh token required"})
+    
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Refresh token required" });
     }
 
+    let decoded;
     try {
-      
-        //  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET_KEY);
-     
-
-      const data = await refreshAccessTokenService(refreshToken,userModel)
-
-      res.status(200).json({
-        message : "New access token generated",
-        accessToken : data.accessToken,
-        refreshToken : data.refreshToken
-      })
+    
+      decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET_KEY);
+    } catch (err) {
+      return res.status(403).json({ message: "Refresh token expired, please login again" });
     }
-    catch(error){
-      res.status(403).json({message : error.message})
+
+    
+    const user = await userModel.findById(decoded.userId);
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(403).json({ message: "Invalid refresh token" });
     }
+
+   
+    const newAccessToken = generateAccessToken(user);
+
+  
+    user.accessToken = newAccessToken;
+    await user.save();
+
+    
+    res.status(200).json({
+      message: "New access token generated successfully",
+      accessToken: newAccessToken,
+      refreshToken: refreshToken, // refresh token same
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
+};
 
 
 
 
-
-  // Logout Api logic 
+ // Logout Api logic 
 
   export  const   logout = async (req,res)=>{
     try {
@@ -154,6 +175,186 @@ export const login = async (req,res)=>{
        res.status(500).json({message: "Logout failed", error})
     }
   };
+
+
+
+    //  tokenverify get api logic
+
+export const tokenVerify = async (req, res) => {
+try {
+
+const userId = req.user?.userId;
+if (!userId) return res.status(401).json({ message: "Invalid token" });
+
+
+const user = await userModel.findById(userId).select("_id name email");
+if (!user) return res.status(404).json({ message: "User not found" });
+
+
+res.status(200).json({ message: "Token valid", user: { userId: user._id.toString(), name: user.name, email: user.email } });
+} catch (error) {
+res.status(500).json({ message: "Something went wrong", error: error.message });
+}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /*  export const refreshTokencontroller = async (req,res)=>{
+    
+    
+    try {
+          const {refreshToken} = req.body;
+
+    if(!refreshToken){
+      return res.status(401).json({message : "Refresh token required"})
+    }
+
+  
+      
+        //  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET_KEY);
+     
+
+      const data = await refreshAccessTokenService(refreshToken)
+
+      res.status(200).json({
+        message : "New access token generated",
+        accessToken : data.accessToken,
+        refreshToken : data.refreshToken
+      })
+    }
+    catch(error){
+      res.status(403).json({message : error.message})
+    }
+  }   */ 
+ 
+
+
+
+
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /*   export const tokenVerify = async (req,res)=>{
+
+    
+      try {
+            res.status(200).json({
+            message: "Token successfully!",
+            token: req.token, 
+           });
+      } catch (error) {
+           res.status(500).json({ message: "Something went wrong", error: error.message });
+  }
+}    */
 
 
 

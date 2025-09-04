@@ -24,7 +24,7 @@ export default function Home() {
  
     const handleLogout = async () => {
     try {
-      const userId = localStorage.getItem("UserId"); 
+      const userId = localStorage.getItem("userId"); 
 
       
 

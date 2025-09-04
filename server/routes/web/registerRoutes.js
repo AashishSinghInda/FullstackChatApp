@@ -1,5 +1,6 @@
 import express from "express";
-import { login, logout, refreshTokencontroller, register } from "../../controllers/authController.js";
+import { login, logout, refreshTokencontroller, register, tokenVerify } from "../../controllers/authController.js";
+import { verifyAccessToken } from "../../middleware/authMiddleware.js";
 
 
 let RegisterRoutes = express.Router();
@@ -12,4 +13,6 @@ RegisterRoutes.post("/refresh-token",refreshTokencontroller)
 
 RegisterRoutes.post("/logout",logout)
 
-export {RegisterRoutes}
+RegisterRoutes.get("/profile" , verifyAccessToken ,tokenVerify)
+
+export {RegisterRoutes} 

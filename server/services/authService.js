@@ -3,10 +3,13 @@ import userModel from "../models/userModel.js";
 
 
 export const generateAccessToken = (user)=>{
+   // console.log("===========>>>>>>>>>>>>>>>>>>>>>>", process.env.JWT_SECRET_KEY);
+    
     return jwt.sign(
-        {userId : user._id.toString(), email : user.email},
+        {userId : user._id.toString(), 
+        email : user.email},
         process.env.JWT_SECRET_KEY,
-        {expiresIn : "1m"} 
+        {expiresIn : "2m"} 
     )
 }   
 
@@ -15,13 +18,13 @@ export const generateRefreshToken = (user)=>{
     return jwt.sign(
         {userId : user._id.toString(), email : user.email},
         process.env.JWT_REFRESH_SECRET_KEY ,
-        {expiresIn : "5m"}
+        {expiresIn : "15m"}
        
     )                                           
 }
 
 
-export const refreshAccessTokenService = async (refreshToken,userModel) =>{
+/* export const refreshAccessTokenService = async (refreshToken,userModel) =>{
     if(!refreshToken){
         throw new Error ("Refresh token required!")
     }
@@ -46,13 +49,15 @@ export const refreshAccessTokenService = async (refreshToken,userModel) =>{
         const newRefreshToken = generateRefreshToken(user)
 
       
-        
+        user.accessToken = newAccessToken
         user.refreshToken  = newRefreshToken
         await user.save();
 
+        
+
         return {accessToken : newAccessToken , refreshToken : newRefreshToken}
     
-} 
+}   */ 
 
 
 

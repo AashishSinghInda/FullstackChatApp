@@ -19,10 +19,20 @@ export const verifyAccessToken = (req, res, next) => {
       return res.status(403).json({ message: "Invalid access token" });
     }
 
+    req.token = token;
     req.user = decoded;
     next();
   });
 };
+
+
+
+  /*  export const verifyAdmin = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access Admin only" });
+  }
+  next();
+    };  */ 
 
 
 

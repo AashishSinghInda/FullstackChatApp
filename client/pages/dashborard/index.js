@@ -1,4 +1,392 @@
+
 "use client";
+import { useEffect, useState } from "react";
+import instance from "../../utils/axiosInstance";
+import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+
+const Dashboard = () => {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  
+  const fetchUser = async () => {
+    try {
+      const res = await instance.get("/auth/profile");
+      setUser(res.data.user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+
+     
+      if (error.response?.status === 401) {
+        toast.error("localstorage expired! Please login again.");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+ 
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    
+    if (!accessToken || !refreshToken) {
+      router.push("/login");
+    } else {
+      fetchUser();
+    }
+  }, [router]);
+
+  return (
+    <div>
+      <ToastContainer />
+      {loading ? (
+        <p>Loading user info...</p>
+      ) : user ? (
+        <h2>
+          Welcome, {user.name} ({user.email})
+        </h2>
+      ) : (
+        <p>No user data found</p>
+      )}
+    </div>
+  );
+};
+
+export default Dashboard;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* "use client";
+import { useEffect, useState } from "react";
+import instance from "../../utils/axiosInstance";
+import { useRouter } from "next/navigation";
+
+const Dashboard = () => {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await instance.get("/auth/profile");
+        setUser(res.data.user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        router.push("/login");
+      }
+    };
+
+    fetchUser();
+  }, [router]);
+
+  return (
+    <div>
+      {user ? <h2>Welcome, {user.name} {user.email}</h2> : <p>Loading user info...</p>}
+    </div>
+  );
+};
+
+export default Dashboard;   */ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* "use client"
+
+import { useEffect, useState } from "react";
+import instance from "../../utils/axiosInstance";
+import { useRouter } from "next/router";
+
+const Dashboard = () => {
+  const router = useRouter()
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+
+       const res = await instance.post("/auth/profile")
+       /* {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });   */
+
+   /*     setUser(res.data.user);   
+      } catch (error) {
+        localStorage.removeItem("accessToken");
+        router.push("/login");
+      }
+    };
+
+    fetchUser();
+  }, [router]);
+
+  return (
+    <div>
+      {user ? (
+        <h2>Welcome, {user.id} {user.name} {user.email}  </h2>
+      ) : (
+        <p>Loading user info...</p>
+      )}
+    </div>
+  );
+};
+
+export default Dashboard;  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*  "use client";
 
 import {jwtDecode} from "jwt-decode";
 import { useEffect, useState } from "react";
@@ -45,4 +433,4 @@ export default function Dashboard() {
       <button onClick={() => { localStorage.clear(); router.push("/login"); }}>Logout</button>
     </div>
   );
-}
+}   */  
