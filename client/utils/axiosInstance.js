@@ -1,7 +1,7 @@
 // src/lib/axiosInstance.js
 import axios from "axios";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const instance = axios.create({
   baseURL: BASE_URL,
@@ -51,9 +51,10 @@ instance.interceptors.response.use(
 
         // Refresh token expire → Logout user
         localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+      //  localStorage.removeItem("refreshToken");  // yaha per update kiya hai login page per user ko direct send na kare
+        console.log("localstroage is clear")
         window.location.href = "/login";
-      }
+      }   
     }
 
     return Promise.reject(error);

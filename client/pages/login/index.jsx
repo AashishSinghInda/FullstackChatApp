@@ -4,7 +4,7 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from "next/router";
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
@@ -18,6 +18,18 @@ export default function Login() {
     password: ''
   })
 
+useEffect(()=>{
+      
+        const accessToken =  localStorage.getItem("accessToken")
+        const refreshToken = localStorage.getItem("refreshToken")  
+        
+        if(accessToken && refreshToken){ // ya update kiya hai 
+          router.push("/Home")  // ya update kiya hai 
+       }   // yaha per update kiya hai 
+       
+     
+  },[router])  
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
@@ -28,6 +40,8 @@ export default function Login() {
        const res =  await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, form)
       localStorage.setItem("accessToken", res.data.accessToken)
       localStorage.setItem("refreshToken",res.data.refreshToken)
+  //   localStorage.setItem("accessTokenExpiry",res.data.accessTokenExpiry)
+  //    localStorage.setItem("refreshTokenExpiry",res.data.refreshTokenExpiry)
      // localStorage.setItem("UserId",res.data.user.userId)
      localStorage.setItem("userId",res.data.user.userId)
 

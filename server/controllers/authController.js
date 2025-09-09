@@ -1,5 +1,5 @@
 import userModel from "../models/userModel.js"
-
+import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { generateAccessToken, generateRefreshToken } from "../services/authService.js";
 
@@ -77,7 +77,11 @@ export const login = async (req,res)=>{
     const accessToken = generateAccessToken(user)
     const refreshToken = generateRefreshToken(user)
 
-    
+  //  const decodedAccess = jwt.decode(accessToken)  // yaha per udate kiya hai 
+  //  const decodedRefresh = jwt.decode(refreshToken)  // yaha per udate kiya hai 
+
+  //  const accessTokenExpiry = decodedAccess.exp * 1000 // second me convert ke liye ye logic implement kiya hai 
+  //  const refreshTokenExpiry = decodedRefresh.exp * 1000
 
     
 
@@ -85,9 +89,7 @@ export const login = async (req,res)=>{
     user.refreshToken = refreshToken;
     await user.save();  
 
-    console.log(accessToken)
-    console.log(refreshToken)
-
+    
     res.status(200).json({
       message : "Login successfull!",
       user : {
@@ -98,6 +100,7 @@ export const login = async (req,res)=>{
       },
       accessToken,
       refreshToken,
+     
     })
     }
     
@@ -112,6 +115,8 @@ export const login = async (req,res)=>{
   try {
     const { refreshToken } = req.body;
 
+    console.log("Incoming Refresh Token:", refreshToken);
+
     
     if (!refreshToken) {
       return res.status(401).json({ message: "Refresh token required" });
@@ -121,6 +126,7 @@ export const login = async (req,res)=>{
     try {
     
       decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET_KEY);
+   //    console.log("Decoded Refresh Token:", decoded);
     } catch (err) {
       return res.status(403).json({ message: "Refresh token expired, please login again" });
     }
@@ -158,7 +164,7 @@ export const login = async (req,res)=>{
     try {
       const {userId} = req.body
 
-      console.log(userId)
+   //   console.log(userId)
 
       if(!userId){
        return  res.status(400).json({message : "User Id is required!"})
@@ -195,8 +201,7 @@ res.status(200).json({ message: "Token valid", user: { userId: user._id.toString
 } catch (error) {
 res.status(500).json({ message: "Something went wrong", error: error.message });
 }
-};
-
+}
 
 
 

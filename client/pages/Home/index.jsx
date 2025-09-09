@@ -1,68 +1,48 @@
 "use client"
 
-import axios from 'axios'
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
-import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
-import { toast, ToastContainer } from 'react-toastify'
+
+import React, { useState } from 'react'
+import Header from '@/common/Header'
+
+
 
 export default function Home() {
 
-  const router = useRouter()
-
-//  console.log("get user id >>>>>>", localStorage.getItem("userId"))
+  let [boxShow, setBoxShow]  = useState(false)
 
 
-  useEffect(()=>{
-    const accessToken = localStorage.getItem("accessToken")
-    const refreshToken = localStorage.getItem("refreshToken")
-
-    if(!accessToken || !refreshToken){
-      router.push("/login")
-    }
-  },[router])
- 
-    const handleLogout = async () => {
-    try {
-      const userId = localStorage.getItem("userId"); 
-
-      
-
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, { userId });
-
-      localStorage.removeItem("accessToken")
-      localStorage.removeItem("refreshToken")
-      toast.success("Logout successful!")
-     
-  
-
-      setTimeout(() => {
-       router.push("/login"); 
-      }, 2000);
-      
-    } catch (error) {
-      toast.error("Logout failed");
-    }
-  }
-  
   return (
    <>
-   <ToastContainer/>
-
-   {/* Card Header Section */}
-
-   <header className='bg-white  py-[10px] px-[30px] flex justify-between items-center' >
-    <div className="">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt4oxC0ZySTb_RH8m586IZc3AcoimYdqFjyg&s" alt="" className='rounded-xl h-[100px] w-[100px]' />
+    <Header/>
+    <div className=' max-w-[1000px] mx-auto grid grid-cols-2 my-[50px] gap-[100px] '>
+      <div className='h-[300px] border border-white  rounded-b-xl' >
+         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpOeUKFeWYoEG36LnnmOvhu_yawgREmpHF8w&s" className='w-[100%] h-[200px]' alt="" />
+         <button onClick={()=> setBoxShow(!boxShow)} className='bg-blue-600 p-[10px_30px] m-[20px_20px] rounded-xl cursor-pointer'>Chat Me</button>
+      </div>
+       <div className='h-[300px] border border-white  rounded-b-xl'>
+         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpOeUKFeWYoEG36LnnmOvhu_yawgREmpHF8w&s" className='w-[100%] h-[200px]' alt="" />
+         <button  onClick={()=> setBoxShow(!boxShow)} className='bg-blue-600 p-[10px_30px] m-[20px_20px] rounded-xl cursor-pointer'>Chat Me</button>
+      </div>
     </div>
-    <div>
-      <button onClick={handleLogout} className='font-black text-black cursor-pointer p-[10px] border-2 border-gray-600 rounded-2xl'>Logout</button>
-    </div>
-   </header>
 
+
+    {boxShow ?
+    <div className='max-w-[1000px] mx-auto my-[50px]'>
+      <form>
+        <h1 className='py-[10px]'>Message Box</h1>
+        <textarea name="" id="" className='border-2 border-white w-[30%] resize-none px-[10px]' placeholder='Enter Your Message'></textarea><br />
+        <button type='submit' className='my-[10px] bg-blue-500 p-[10px] rounded-xl cursor-pointer'>Send Message</button>
+      </form>
+    </div>
+
+    :
+    ''
+     }
     
   
 
    </>
   )
 }
+
+

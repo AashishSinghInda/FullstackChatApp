@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import instance from "../../utils/axiosInstance";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
+import Header from "@/common/Header";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -21,16 +23,15 @@ const Dashboard = () => {
      
       if (error.response?.status === 401) {
         toast.error("localstorage expired! Please login again.");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        setTimeout(() => {
-          router.push("/login");
-        }, 2000);
-      }
+        
+       setTimeout(() => {  // ya per bhi update kiya hai 
+          router.push("/login"); // ya per bhi update kiya hai 
+        }, 2000); // ya per bhi update kiya hai 
+      }    
     } finally {
       setLoading(false);
     }
-  };
+  }
 
  
   useEffect(() => {
@@ -48,6 +49,7 @@ const Dashboard = () => {
   return (
     <div>
       <ToastContainer />
+      <Header/>
       {loading ? (
         <p>Loading user info...</p>
       ) : user ? (

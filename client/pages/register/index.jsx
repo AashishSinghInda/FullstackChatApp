@@ -17,7 +17,7 @@ const[form,setForm] = useState({
     name : '',
     email : '',
     password : '',
-    currentPassword : ''
+    currentPassword : '',
 });
 
  const handleChange = (e) =>{

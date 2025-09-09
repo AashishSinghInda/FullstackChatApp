@@ -2,8 +2,10 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import os from "os";
+import http, { Server } from "http"; 
 import mongoose from "mongoose";
 import {webRoutes} from "./routes/web/webRoutes.js";
+import { Socket } from "socket.io";
 
 dotenv.config();
 const app = express();
@@ -17,6 +19,20 @@ app.use(express.json());
 }));   
 
 const PORT = process.env.PORT || 5000;
+
+// create   socket.IO server
+/* const server =  http.createServer(app)
+const io = new Server(server,{
+  cors : {
+    origin : "http://localhost:3000",
+    methods : ["GET", "POST"],
+    credentials : true,
+  }
+}) */
+
+/*io.on("connection",(Socket)=>{
+  console.log("User Connected",Socket.id)
+}) */
 
 
 app.use("/web",webRoutes) // http://localhost:5000/web
